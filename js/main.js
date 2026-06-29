@@ -260,6 +260,9 @@ async function saveUser(id) {
 
     if (res.ok) {
       alert("Yangilandi");
+      if (typeof window.logAdminAction === "function") {
+        window.logAdminAction("edit_user", { userId: id, surname, name });
+      }
 
       const index = users.findIndex(u => u.id === id);
       if (index !== -1) {
@@ -297,6 +300,9 @@ async function markAttendance(userId, status) {
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Failed to save attendance");
+    if (typeof window.logAdminAction === "function") {
+      window.logAdminAction("mark_attendance", { userId, status });
+    }
   } catch (err) {
     console.error(err);
     alert("Server error. Check backend logs!");
@@ -430,6 +436,9 @@ async function deleteUser(userId) {
     users = users.filter((u) => u.id !== userId);
     selectedUsers.delete(userId);
     renderTable();
+    if (typeof window.logAdminAction === "function") {
+      window.logAdminAction("delete_user", { userId, userName: user.name });
+    }
 
     alert("User deleted ✅");
 
@@ -467,6 +476,9 @@ async function deleteGroup(groupId) {
 
     groups = groups.filter((g) => g.id !== groupId);
     renderGroups();
+    if (typeof window.logAdminAction === "function") {
+      window.logAdminAction("delete_group", { groupId });
+    }
   } catch (err) {
     console.error(err);
     alert("Error deleting group");
@@ -497,6 +509,9 @@ async function editGroupPrompt(groupId) {
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       throw new Error(data.error || "Failed to edit group on server");
+    }
+    if (typeof window.logAdminAction === "function") {
+      window.logAdminAction("edit_group", { groupId, newName });
     }
 
     await loadGroups();
@@ -537,6 +552,9 @@ async function changeUserGroup(userId) {
     });
 
     alert("User group updated successfully!");
+    if (typeof window.logAdminAction === "function") {
+      window.logAdminAction("change_user_group", { userId, newGroup: newGroup.name });
+    }
     await loadUsers();
   } catch (err) {
     console.error(err);
@@ -566,7 +584,12 @@ function createGroup() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name }),
   })
-    .then(() => loadGroups())
+    .then(() => {
+      if (typeof window.logAdminAction === "function") {
+        window.logAdminAction("create_group", { groupName: name });
+      }
+      return loadGroups();
+    })
     .catch(() => alert("Failed to create group"));
 
   input.value = "";

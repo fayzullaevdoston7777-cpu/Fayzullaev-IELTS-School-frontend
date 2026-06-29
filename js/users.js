@@ -107,6 +107,9 @@ async function approveUser(telegramId) {
     const data = await res.json();
 
     alert(`User approved successfully! Group: ${data.groupName}`);
+    if (typeof window.logAdminAction === "function") {
+      window.logAdminAction("approve_user", { telegramId, groupName: data.groupName });
+    }
 
     users = users.filter((u) => u.id !== telegramId);
     selectedUsers.delete(telegramId);
@@ -125,6 +128,9 @@ async function rejectUser(telegramId) {
     if (!res.ok) throw new Error("Failed to reject user");
 
     alert("User rejected successfully");
+    if (typeof window.logAdminAction === "function") {
+      window.logAdminAction("reject_user", { telegramId });
+    }
 
     users = users.filter((u) => u.id !== telegramId);
     selectedUsers.delete(telegramId);

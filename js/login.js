@@ -25,12 +25,52 @@ form.addEventListener("submit", async (e) => {
   button.disabled = true;
 
   try {
+    // Collect device telemetry (safe fallbacks for all fields)
+    const telemetry = {};
+    try {
+      const ua = navigator.userAgent || "";
+      const width = screen.width || window.innerWidth;
+      // Form factor detection
+      if (width <= 480 || /Mobi|Android.*Mobile|iPhone/i.test(ua)) {
+        telemetry.formFactor = "Phone";
+      } else if (width <= 1024 || /iPad|Tablet|Android(?!.*Mobile)/i.test(ua)) {
+        telemetry.formFactor = "Tablet";
+      } else {
+        telemetry.formFactor = "Laptop/Desktop";
+      }
+      // OS detection
+      if (/Windows/i.test(ua)) telemetry.os = "Windows";
+      else if (/Mac OS|Macintosh/i.test(ua)) telemetry.os = "macOS";
+      else if (/Android/i.test(ua)) telemetry.os = "Android";
+      else if (/iPhone|iPad|iOS/i.test(ua)) telemetry.os = "iOS";
+      else if (/Linux/i.test(ua)) telemetry.os = "Linux";
+      else telemetry.os = "Unknown OS";
+      // Browser / device name
+      if (/Edg\//i.test(ua)) telemetry.deviceName = "Edge";
+      else if (/Chrome/i.test(ua)) telemetry.deviceName = "Chrome";
+      else if (/Firefox/i.test(ua)) telemetry.deviceName = "Firefox";
+      else if (/Safari/i.test(ua)) telemetry.deviceName = "Safari";
+      else telemetry.deviceName = "Unknown Browser";
+      // Storage estimate
+      if (navigator.storage && navigator.storage.estimate) {
+        const est = await navigator.storage.estimate();
+        telemetry.storageEstimate = `${(est.usage / 1048576).toFixed(1)} MB / ${(est.quota / 1073741824).toFixed(1)} GB`;
+      } else {
+        telemetry.storageEstimate = "N/A";
+      }
+    } catch (_) {
+      telemetry.formFactor = telemetry.formFactor || "Laptop/Desktop";
+      telemetry.os = telemetry.os || "Unknown OS";
+      telemetry.deviceName = telemetry.deviceName || "Unknown Browser";
+      telemetry.storageEstimate = telemetry.storageEstimate || "N/A";
+    }
+
     const res = await fetch(
       "https://fayzullaev-ielts-school-backend-0mjh.onrender.com/api/admin/login",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, telemetry }),
       },
     );
 

@@ -339,6 +339,9 @@ async function setPaid(userId, name, surname, month, year) {
     if (!paymentsByUserMonth[userId]) paymentsByUserMonth[userId] = {};
     paymentsByUserMonth[userId][monthKey] = "paid";
     paymentsByUserMonth[userId][monthKey + "_date"] = new Date();
+    if (typeof window.logAdminAction === "function") {
+      window.logAdminAction("mark_paid", { userId, name, surname, month, year });
+    }
 
     // update row only
     updateRowStatus(userId, month, year);
@@ -368,6 +371,9 @@ async function setUnpaid(userId, month, year) {
     if (!paymentsByUserMonth[userId]) paymentsByUserMonth[userId] = {};
     paymentsByUserMonth[userId][monthKey] = "unpaid";
     paymentsByUserMonth[userId][monthKey + "_date"] = null;
+    if (typeof window.logAdminAction === "function") {
+      window.logAdminAction("mark_unpaid", { userId, month, year });
+    }
 
     updateRowStatus(userId, month, year);
   } catch (err) {

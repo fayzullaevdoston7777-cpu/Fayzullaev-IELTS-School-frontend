@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="./images/logo.jpg" type="image/x-icon">
+  <title>Superadmin Dashboard</title>
+  <meta name="description" content="Admin management panel with audit logs, session telemetry and credential management.">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/sidebar.css">
+  <link rel="stylesheet" href="./css/superadmin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="./js/sidebar.js" defer="true"></script>
+  <script src="./js/superadmin.js" defer="true"></script>
+</head>
+<body>
+  <!-- Navbar kept for mobile hamburger trigger -->
+  <nav class="navbar">
+    <div class="hamburger" id="hamburger">&#9776;</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#">Admin Panel</a></li>
+      <li class="right-links">
+        <a href="attendance.html">Attendance</a>
+        <a href="payment.html">Payment</a>
+        <a href="absentUsers.html">Absent Students</a>
+        <a href="users.html">User Authentication</a>
+        <a href="index.html">Log out</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container" style="flex-direction:column; padding:30px;">
+    <!-- Page Header -->
+    <div class="superadmin-header">
+      <div>
+        <h1><i class="fa-solid fa-shield-halved" style="color:#3b82f6;margin-right:8px;"></i>Admin Dashboard</h1>
+        <p class="subtitle">Manage credentials, monitor sessions, and review audit trails</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+
+      <!-- Card 1: Admin Credentials -->
+      <div class="dashboard-card">
+        <div class="card-header flex-header">
+          <h2><i class="fa-solid fa-users-gear"></i> Admin Credentials</h2>
+          <button class="primary-btn" id="addAdminBtn" style="font-size:12px;padding:6px 14px;">
+            <i class="fa-solid fa-plus"></i> Add Admin
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="superadmin-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Password</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminsTableBody">
+                <tr><td colspan="4"><div class="skeleton skeleton-row"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Session Telemetry -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2><i class="fa-solid fa-satellite-dish"></i> Session Telemetry</h2>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="superadmin-table">
+              <thead>
+                <tr>
+                  <th>Admin</th>
+                  <th>Login Time</th>
+                  <th>IP Address</th>
+                  <th>Form Factor</th>
+                  <th>OS / Browser</th>
+                  <th>Storage</th>
+                </tr>
+              </thead>
+              <tbody id="sessionsTableBody">
+                <tr><td colspan="6"><div class="skeleton skeleton-row"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Audit Logs (Full Width) -->
+      <div class="dashboard-card full-width">
+        <div class="card-header flex-header">
+          <h2><i class="fa-solid fa-timeline"></i> Audit Timeline</h2>
+          <div class="audit-controls">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="auditSearchInput" placeholder="Search logs by user, action..." />
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="timeline-container" id="auditTimeline">
+            <div class="skeleton skeleton-row"></div>
+            <div class="skeleton skeleton-row"></div>
+            <div class="skeleton skeleton-row"></div>
+          </div>
+          <div id="auditPagination" class="pagination"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Add/Edit Modal -->
+  <div id="adminModalOverlay" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add New Admin</h3>
+        <button class="close-modal-btn" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="modalUsername">Username</label>
+          <input type="text" id="modalUsername" placeholder="Enter username" />
+        </div>
+        <div class="form-group">
+          <label for="modalPassword">Password</label>
+          <input type="password" id="modalPassword" placeholder="Enter password" />
+        </div>
+        <div class="form-group">
+          <label for="modalRole">Role</label>
+          <select id="modalRole">
+            <option value="admin">Admin</option>
+            <option value="moderator">Moderator</option>
+            <option value="superadmin">Superadmin</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" id="cancelModalBtn">Cancel</button>
+          <button class="primary-btn" id="saveAdminBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
